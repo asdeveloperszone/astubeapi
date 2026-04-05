@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import PlainTextResponse
 import yt_dlp
@@ -29,6 +30,11 @@ def get_360p_url(video_id: str) -> str:
         "no_warnings": True,
         "skip_download": True,
         "format": "bestvideo[height<=360][ext=mp4]+bestaudio[ext=m4a]/best[height<=360][ext=mp4]/best[height<=360]/best",
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["android"],
+            }
+        },
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=False)
