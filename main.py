@@ -34,6 +34,11 @@ def get_video_url(video_id: str) -> str:
         "skip_download": True,
         "format": "best",
         "cookiefile": COOKIES_PATH if os.path.exists(COOKIES_PATH) else None,
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["web"],
+            }
+        },
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=False)
