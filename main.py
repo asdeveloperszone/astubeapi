@@ -49,6 +49,16 @@ def root():
     return {"status": "ok", "message": "ASTUBE API is running 🚀"}
 
 
+@app.get("/debug")
+def debug():
+    return {
+        "cookies_path": COOKIES_PATH,
+        "cookies_exists": os.path.exists(COOKIES_PATH),
+        "cwd": os.getcwd(),
+        "files": os.listdir(os.getcwd()),
+    }
+
+
 @app.get("/video", tags=["Video"])
 def get_video(id: str = Query(..., description="YouTube video ID or full YouTube URL")):
     try:
