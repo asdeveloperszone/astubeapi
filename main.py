@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import PlainTextResponse
 import yt_dlp
@@ -29,7 +30,7 @@ def get_360p_url(video_id: str) -> str:
         "quiet": True,
         "no_warnings": True,
         "skip_download": True,
-        "format": "bestvideo[height<=360][ext=mp4]+bestaudio[ext=m4a]/best[height<=360][ext=mp4]/best[height<=360]/best",
+        "format": "18/best[height<=360][ext=mp4]/best[height<=360]",
         "cookiefile": "/app/cookies.txt" if os.path.exists("/app/cookies.txt") else None,
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
