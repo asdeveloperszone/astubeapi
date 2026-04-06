@@ -30,31 +30,16 @@ def get_360p_url(video_id: str) -> str:
         "quiet": True,
         "no_warnings": True,
         "skip_download": True,
-        "format": "18/best[height<=360][ext=mp4]/best[height<=360]",
+        "format": "best[ext=mp4]/best",
         "cookiefile": "/app/cookies.txt" if os.path.exists("/app/cookies.txt") else None,
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=False)
 
-    chosen = None
-    for fmt in info.get("formats", []):
-        h = fmt.get("height") or 0
-        ext = fmt.get("ext", "")
-        if h <= 360 and ext == "mp4" and fmt.get("url"):
-            if chosen is None or h > (chosen.get("height") or 0):
-                chosen = fmt
-
-    if not chosen:
-        for fmt in info.get("formats", []):
-            h = fmt.get("height") or 0
-            if h <= 360 and fmt.get("url"):
-                if chosen is None or h > (chosen.get("height") or 0):
-                    chosen = fmt
-
-    if not chosen:
-        raise ValueError("No suitable 360p (or lower) format found for this video.")
-
-    return chosen["url"]
+    url = info.get("url") or info.get("formats", [{}])[-1].get("url")
+    if not url:
+        raise ValueError("No URL found.")
+    return url
 
 
 @app.get("/", tags=["Health"])
