@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import PlainTextResponse
 import yt_dlp
@@ -31,11 +32,12 @@ def get_video_url(video_id: str) -> str:
         "quiet": True,
         "no_warnings": True,
         "skip_download": True,
-        "format": "best",
+        "noplaylist": True,
+        "format": "bestvideo+bestaudio/best",
         "cookiefile": COOKIES_PATH if os.path.exists(COOKIES_PATH) else None,
         "extractor_args": {
             "youtube": {
-                "player_client": ["web"],
+                "player_client": ["ios"],
             }
         },
     }
@@ -75,7 +77,13 @@ def get_formats(id: str = Query(...)):
         "quiet": True,
         "no_warnings": True,
         "skip_download": True,
+        "noplaylist": True,
         "cookiefile": COOKIES_PATH if os.path.exists(COOKIES_PATH) else None,
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["ios"],
+            }
+        },
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=False)
