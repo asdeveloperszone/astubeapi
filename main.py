@@ -1,4 +1,3 @@
-
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import PlainTextResponse
 import yt_dlp
@@ -62,6 +61,36 @@ def debug():
         "cwd": os.getcwd(),
         "files": os.listdir(os.getcwd()),
     }
+
+
+@app.get("/formats")
+def get_formats(id: str = Query(...)):
+    try:
+        video_id = extract_video_id(id)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    url = f"https://www.youtube.com/watch?v={video_id}"
+    ydl_opts = {
+        "quiet": True,
+        "no_warnings": True,
+        "skip_download": True,
+        "cookiefile": COOKIES_PATH if os.path.exists(COOKIES_PATH) else None,
+    }
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(url, download=False)
+
+    formats = [
+        {
+            "format_id": f.get("format_id"),
+            "ext": f.get("ext"),
+            "height": f.get("height"),
+            "vcodec": f.get("vcodec"),
+            "acodec": f.get("acodec"),
+        }
+        for f in info.get("formats", [])
+    ]
+    return {"formats": formats}
 
 
 @app.get("/video", tags=["Video"])
